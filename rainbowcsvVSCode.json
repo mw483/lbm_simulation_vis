@@ -1,0 +1,83 @@
+{
+    "C_Cpp.default.compilerPath": "cl.exe",
+    "cmake.configureOnOpen": true,
+    "git.autofetch": true,
+    "git.enableSmartCommit": true,
+    "liveServer.settings.donotShowInfoMsg": true,
+    "editor.tokenColorCustomizations": {
+    "textMateRules": [
+        {
+            "scope": "rainbow1",
+            "settings": {
+               "foreground": "#80CAF1"
+            }
+        },
+        {
+            "scope": "keyword.rainbow2",
+            "settings": {
+               "foreground": "#BCD776",
+               "fontStyle": "bold"
+            }
+        },
+        {
+            "scope": "entity.name.function.rainbow3",
+            "settings": {
+               "foreground": "#F8CFD7",
+               "fontStyle": "italic"
+            }
+        },
+        {
+            "scope": "comment.rainbow4",
+            "settings": {
+               "foreground": "#9C9ECF",
+               "fontStyle": "underline"
+            }
+        },
+        {
+            "scope": "string.rainbow5",
+            "settings": {
+               "foreground": "#FAC857"
+            }
+        },
+        {
+            "scope": "variable.parameter.rainbow6",
+            "settings": {
+               "foreground": "#6FC5C2",
+               "fontStyle": "bold"
+            }
+        },
+        {
+            "scope": "constant.numeric.rainbow7",
+            "settings": {
+               "foreground": "#FFFFFF",
+               "fontStyle": "italic"
+            }
+        },
+        {
+            "scope": "entity.name.type.rainbow8",
+            "settings": {
+               "foreground": "#E81933",
+               "fontStyle": "underline"
+            }
+        },
+        {
+            "scope": "markup.bold.rainbow9",
+            "settings": {
+               "foreground": "#016CBA"
+            }
+        },
+        {
+            "scope": "invalid.rainbow10",
+            "settings": {
+               "foreground": "#F9C596"
+            }
+        },
+        {
+            "scope": "rainbow11",
+            "settings": {
+               "foreground": "#FC5D9D"
+            }
+        }
+    ]
+}
+}
