@@ -4,9 +4,10 @@ import matplotlib.ticker as ticker
 import os
 
 file_paths = [
-    r"Simulation 20250619\Output\prof00060000_0000.csv",
-    r"Simulation 20250619\Output\prof00120000_0000.csv",
-    r"Simulation 20250619\Output\prof00180000_0000.csv",
+    r"20250623_1900_Output\prof00060000_0000.csv",
+    r"20250623_1900_Output\prof00120000_0000.csv",
+    r"20250623_1900_Output\prof00180000_0000.csv",
+    r"20250623_1900_Output\prof00240000_0000.csv",
 ]
 
 columns = [
@@ -15,7 +16,7 @@ columns = [
 ]
 
 # Output directory relative to the script location
-output_dir = os.path.join(os.path.dirname(__file__), "Fig_Prof_Sim20250619")
+output_dir = os.path.join(os.path.dirname(__file__), "Fig_Prof_Sim20250623")
 os.makedirs(output_dir, exist_ok=True)
 
 # Initialize dictionaries to store profiles
