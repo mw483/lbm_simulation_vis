@@ -4,9 +4,10 @@ import matplotlib.ticker as ticker
 import os
 
 file_paths = [
-    r"Simulation 20250619\Output\prof00060000_0000.csv",
-    r"Simulation 20250619\Output\prof00120000_0000.csv",
-    r"Simulation 20250619\Output\prof00180000_0000.csv",
+    r"20250623_1900_Output\prof00060000_0000.csv",
+    r"20250623_1900_Output\prof00120000_0000.csv",
+    r"20250623_1900_Output\prof00180000_0000.csv",
+    r"20250623_1900_Output\prof00240000_0000.csv",
 ]
 
 columns = [
@@ -15,23 +16,26 @@ columns = [
 ]
 
 # Output directory relative to the script location
-output_dir = os.path.join(os.path.dirname(__file__), "Fig_Prof_Sim20250619")
+output_dir = os.path.join(os.path.dirname(__file__), "Fig_Prof_Sim20250623")
 os.makedirs(output_dir, exist_ok=True)
 
 # Initialize dictionaries to store profiles
-profiles = {"U": [], "V": [], "W": [], "UU": [], "VV": [], "WW": [], "z": []}
+profiles = {"U": [], "V": [], "W": [], "UU": [], "VV": [], "WW": [], "UV" : [], "UW" : [], "VW" : [], "UpUp" : [], "VpVp" : [], "WpWp" : [], "UpVp" : [], "UpWp" : [], "VpWp" : [], "z": []}
 steps = []
 
 # Debug: Check data loading
 for path in file_paths:
     print(f"\nProcessing file: {path}")
     
+    step = path.split("prof")[1].split("_")[0]
+    steps.append(step)
+
     # Read CSV with proper handling - skip first row, use second row as headers
     try:
         df = pd.read_csv(path, skiprows=1, header=0)  # Skip first row, use second row as header
         
         # Convert columns to numeric, handling any string values
-        numeric_columns = ["z", "U", "V", "W", "UU", "VV", "WW"]
+        numeric_columns = ["z", "U", "V", "W", "UU", "VV", "WW", "UV", "UW", "VW"]
         for col in numeric_columns:
             if col in df.columns:
                 df[col] = pd.to_numeric(df[col], errors='coerce')
@@ -48,16 +52,21 @@ for path in file_paths:
         # Check for any NaN or infinite values
         print(f"NaN values in U: {df['U'].isna().sum()}")
         print(f"Infinite values in U: {df['U'].isin([float('inf'), float('-inf')]).sum()}")
+
+        profiles["UpUp"].append(df["UU"]-df["U"]*df["U"])
+        profiles["VpVp"].append(df["VV"]-df["V"]*df["V"])
+        profiles["WpWp"].append(df["WW"]-df["W"]*df["W"])
+        profiles["UpVp"].append(df["UV"]-df["U"]*df["V"])
+        profiles["UpWp"].append(df["UW"]-df["U"]*df["W"])
+        profiles["VpWp"].append(df["VW"]-df["V"]*df["W"])
         
+
     except Exception as e:
         print(f"Error reading {path}: {e}")
         continue
-    
-    step = path.split("prof")[1].split("_")[0]
-    steps.append(step)
-    
+
     # Store the data
-    for key in ["U", "V", "W", "UU", "VV", "WW"]:
+    for key in ["U", "V", "W", "UU", "VV", "WW", "UV", "UW", "VW"]:
         profiles[key].append(df[key])
     profiles["z"].append(df["z"])
 
@@ -99,7 +108,7 @@ for key in ["U", "V", "W"]:
     plt.close()
 
 # Plot turbulent kinetic energy components
-for key in ["UU", "VV", "WW"]:
+for key in ["UpUp", "VpVp", "WpWp", "UpVp", "UpWp", "VpWp"]:
     plt.figure(figsize=(8, 6))
     
     for i, step in enumerate(steps):
@@ -115,8 +124,8 @@ for key in ["UU", "VV", "WW"]:
         plt.plot(z_data, tke_data, label=f"Step {step}", marker='s', markersize=3, linewidth=1.5)
     
     plt.xlabel("Height z")
-    plt.ylabel(f"{key} Turbulent Kinetic Energy")
-    plt.title(f"Height vs {key} TKE Profile")
+    plt.ylabel(f"Velocity Variance {key}")
+    plt.title(f"Height vs Velocity Variance {key} Profile")
     plt.legend()
     plt.grid(True, alpha=0.3)
     
@@ -132,24 +141,25 @@ for key in ["UU", "VV", "WW"]:
     ax.set_xlim(left=0)  # Start z from 0 if appropriate
     
     plt.tight_layout()
-    plt.savefig(os.path.join(output_dir, f"height_vs_{key}_TKE.png"), dpi=300, bbox_inches='tight')
+    plt.savefig(os.path.join(output_dir, f"height_vs_{key}_variance.png"), dpi=300, bbox_inches='tight')
     plt.show()
     plt.close()
 
-# Additional debugging: Create a summary plot showing all velocity components for one time step
+# Additional debugging: Create a summary plot showing all velocity components for all time steps
 if len(steps) > 0:
-    plt.figure(figsize=(10, 6))
-    step_idx = 0  # Use first time step
-    z_data = profiles["z"][step_idx]
+    plt.figure(figsize=(12, 8))
     
-    for key in ["U", "V", "W"]:
-        vel_data = profiles[key][step_idx]
-        plt.plot(z_data, vel_data, label=f"{key} velocity", marker='o', markersize=4, linewidth=2)
+    for i, step in enumerate(steps):
+        z_data = profiles["z"][i]
+        
+        for key in ["U", "V", "W"]:
+            vel_data = profiles[key][i]
+            plt.plot(z_data, vel_data, label=f"{key} velocity Step {step}", marker='o', markersize=3, linewidth=1.5)
     
     plt.xlabel("Height z")
     plt.ylabel("Velocity Components")
-    plt.title(f"All Velocity Components vs Height (Step {steps[step_idx]})")
-    plt.legend()
+    plt.title("All Velocity Components vs Height (All Steps)")
+    plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')  # Move legend outside plot
     plt.grid(True, alpha=0.3)
     
     ax = plt.gca()
@@ -157,6 +167,6 @@ if len(steps) > 0:
     ax.yaxis.set_major_formatter(ticker.FormatStrFormatter('%.3f'))
     
     plt.tight_layout()
-    plt.savefig(os.path.join(output_dir, f"all_velocity_components_step_{steps[step_idx]}.png"), dpi=300, bbox_inches='tight')
+    plt.savefig(os.path.join(output_dir, "all_velocity_components_all_steps.png"), dpi=300, bbox_inches='tight')
     plt.show()
     plt.close()
